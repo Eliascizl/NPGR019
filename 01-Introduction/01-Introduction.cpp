@@ -7,8 +7,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#define _USE_BUFFERS 0
-#define _INTERLEAVED_BUFFER 0
+#define _USE_BUFFERS 1
+#define _INTERLEAVED_BUFFER 1
 
 // ----------------------------------------------------------------------------
 
@@ -42,6 +42,7 @@ void main()
 R"(
 #version 330 core
 
+// locations can be deleted, but this way is safer
 layout (location = 0) in vec3 position;
 layout (location = 1) in vec3 color;
 
@@ -251,10 +252,17 @@ void createGeometry()
   glBufferData(GL_ARRAY_BUFFER, sizeof(float) * PositionDim * VertexCount, positions, GL_STATIC_DRAW);
 
   // Positions: 3 floats, stride = 3 (3 floats/vertex), offset = 0
+  GLint attribIndex = glGetAttribLocation(shaderProgram, "position");
+  // Following attributes: attribute location, dimension (3 floats), type, whether to normalize, how many bytes per attribute = "stride" ~ jump size, offset
+  glVertexAttribPointer(attribIndex, PositionDim, GL_FLOAT, GL_FALSE, PositionDim * sizeof(float), reinterpret_cast<void*>(0));
+  glEnableVertexAttribArray(attribIndex); // Tied to the location in the shader
+
+  /* formerly (or 1 later)
   glVertexAttribPointer(0, PositionDim, GL_FLOAT, GL_FALSE, PositionDim * sizeof(float), reinterpret_cast<void*>(0));
   glEnableVertexAttribArray(0); // Tied to the location in the shader
+  */
 
-  // Unbind the buffer
+  // Unbind the buffer - good to do even if there's another binding right after
   glBindBuffer(GL_ARRAY_BUFFER, 0);
 
   // Fill the buffer with the data: we're passing 6 vertices each composed of vec3 values => sizeof(char) * 3 * 6
@@ -262,8 +270,9 @@ void createGeometry()
   glBufferData(GL_ARRAY_BUFFER, sizeof(char) * ColorDim * VertexCount, colors, GL_STATIC_DRAW);
 
   // Colors: 3 chars, stride = 3 (3 char/vertex), offset = 0
-  glVertexAttribPointer(1, ColorDim, GL_UNSIGNED_BYTE, GL_TRUE, ColorDim * sizeof(char), reinterpret_cast<void*>(0));
-  glEnableVertexAttribArray(1); // Tied to the location in the shader
+  attribIndex = glGetAttribLocation(shaderProgram, "color");
+  glVertexAttribPointer(attribIndex, ColorDim, GL_UNSIGNED_BYTE, GL_TRUE, ColorDim * sizeof(char), reinterpret_cast<void*>(0));
+  glEnableVertexAttribArray(attribIndex); // Check above
 
   // Unbind the buffer
   glBindBuffer(GL_ARRAY_BUFFER, 0);

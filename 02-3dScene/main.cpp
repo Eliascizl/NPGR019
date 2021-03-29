@@ -264,7 +264,7 @@ bool initOpenGL()
   // Request OpenGL 3.3 core profile upon window creation
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-  glfwWindowHint(GLFW_SAMPLES, 4);
+  glfwWindowHint(GLFW_SAMPLES, 4); // antialiasing
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
   // Create the window
@@ -290,7 +290,7 @@ bool initOpenGL()
   else
     glfwSwapInterval(0);
 
-  // Enable backface culling
+  // Enable backface culling (invisible back faces)
   glEnable(GL_CULL_FACE);
   glCullFace(GL_BACK);
 
