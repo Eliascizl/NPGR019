@@ -29,6 +29,9 @@
 //
 // GLM_FORCE_DEPTH_ZERO_TO_ONE - force projection depth mapping to [0, 1]
 //                               must use glClipControl(), requires OpenGL 4.5
+//
+// More information about the matter here:
+// https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_clip_control.txt
 // ----------------------------------------------------------------------------
 
 // Structure for holding window parameters
@@ -355,7 +358,7 @@ bool initOpenGL()
   return true;
 }
 
-// Helper function for creating the HDR framebuffer
+// Helper function for creating the framebuffer
 void createFramebuffer(int width, int height, GLsizei MSAA)
 {
   // Bind the default framebuffer
@@ -398,8 +401,8 @@ void createFramebuffer(int width, int height, GLsizei MSAA)
   {
     glBindTexture(GL_TEXTURE_2D, renderTarget);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_BYTE, nullptr);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, renderTarget, 0);
   }
 
@@ -431,8 +434,8 @@ void createFramebuffer(int width, int height, GLsizei MSAA)
   {
     glBindTexture(GL_TEXTURE_2D, viewSpacePos);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, width, height, 0, GL_RED, GL_FLOAT, nullptr);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, viewSpacePos, 0);
   }
 
@@ -473,8 +476,8 @@ void createFramebuffer(int width, int height, GLsizei MSAA)
   {
     glBindTexture(GL_TEXTURE_2D, depthStencil);
     glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, GL_DEPTH_COMPONENT, GL_BYTE, nullptr);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthStencil, 0);
   }
 
